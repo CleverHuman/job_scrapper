@@ -1,0 +1,86 @@
+<UserControl x:Class="JobrightScraper.Views.JobsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="12">
+        <Border DockPanel.Dock="Top"
+                Background="#F8FAFC"
+                BorderBrush="#D5DEE7"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Keywords" Foreground="{StaticResource MutedText}"/>
+                <TextBlock Grid.Column="1" Text="Location" Foreground="{StaticResource MutedText}"/>
+                <TextBlock Grid.Column="2" Text="Work mode" Foreground="{StaticResource MutedText}"/>
+                <TextBlock Grid.Column="3" Text="Min score" Foreground="{StaticResource MutedText}"/>
+                <TextBlock Grid.Column="4" Text="Max jobs" Foreground="{StaticResource MutedText}"/>
+
+                <TextBox Grid.Row="1" Grid.Column="0"
+                         Text="{Binding Keywords, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,4,8,0"/>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,4,8,0"/>
+                <ComboBox Grid.Row="1" Grid.Column="2"
+                          ItemsSource="{Binding WorkModes}"
+                          SelectedItem="{Binding WorkMode}"
+                          Margin="0,4,8,0"/>
+                <TextBox Grid.Row="1" Grid.Column="3"
+                         Text="{Binding MinMatchScore, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,4,8,0"/>
+                <TextBox Grid.Row="1" Grid.Column="4"
+                         Text="{Binding MaxJobs, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,4,8,0"/>
+
+                <StackPanel Grid.Row="1" Grid.Column="5"
+                            Orientation="Horizontal"
+                            Margin="8,4,0,0">
+                    <Button Content="Scrape"
+                            Command="{Binding ScrapeCommand}"/>
+                    <Button Content="Stop"
+                            Command="{Binding StopCommand}"/>
+                    <Button Content="Export CSV"
+                            Command="{Binding ExportCsvCommand}"/>
+                    <Button Content="Export Excel"
+                            Command="{Binding ExportExcelCommand}"
+                            Margin="0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <DataGrid ItemsSource="{Binding Jobs}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  CanUserAddRows="False"
+                  GridLinesVisibility="Horizontal"
+                  AlternatingRowBackground="#F8FAFC"
+                  BorderBrush="#D5DEE7">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="2*"/>
+                <DataGridTextColumn Header="Company" Binding="{Binding Company}" Width="*"/>
+                <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
+                <DataGridTextColumn Header="Mode" Binding="{Binding WorkMode}" Width="90"/>
+                <DataGridTextColumn Header="Score" Binding="{Binding MatchScore}" Width="70"/>
+                <DataGridTextColumn Header="Salary" Binding="{Binding Salary}" Width="120"/>
+                <DataGridTextColumn Header="Posted" Binding="{Binding PostedAt}" Width="110"/>
+                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="1.4*"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding DescriptionPreview}" Width="2*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

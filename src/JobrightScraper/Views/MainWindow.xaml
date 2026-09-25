@@ -1,0 +1,33 @@
+<Window x:Class="JobrightScraper.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:JobrightScraper.Views"
+        Title="Jobright Scraper"
+        Height="820"
+        Width="1280"
+        MinHeight="640"
+        MinWidth="960"
+        Background="{StaticResource AppBackground}">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom"
+                Background="#EEF2F6"
+                Padding="12,8"
+                BorderBrush="#D5DEE7"
+                BorderThickness="0,1,0,0">
+            <TextBlock Text="{Binding Jobs.Status}"
+                       Foreground="{StaticResource MutedText}"
+                       TextTrimming="CharacterEllipsis"/>
+        </Border>
+
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}"
+                    Margin="12"
+                    Background="{StaticResource PanelBackground}">
+            <TabItem Header="Browser">
+                <views:BrowserView DataContext="{Binding Browser}"/>
+            </TabItem>
+            <TabItem Header="Jobs">
+                <views:JobsView DataContext="{Binding Jobs}"/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
