@@ -6,9 +6,11 @@ public sealed class JobListing
     public string Company { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public string WorkMode { get; set; } = string.Empty;
-    public int? MatchScore { get; set; }
+    public string JobType { get; set; } = string.Empty;
     public string Salary { get; set; } = string.Empty;
     public string PostedAt { get; set; } = string.Empty;
+    public DateTime? PostedAtUtc { get; set; }
+    public string JobId { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;

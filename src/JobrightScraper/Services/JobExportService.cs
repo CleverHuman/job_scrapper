@@ -40,10 +40,10 @@ public sealed class JobExportService
         Company = job.Company,
         Location = job.Location,
         WorkMode = job.WorkMode,
-        MatchScore = job.MatchScore,
+        JobType = job.JobType,
         Salary = job.Salary,
         PostedAt = job.PostedAt,
-        Url = job.Url,
+        ApplyUrl = job.Url,
         Description = job.Description,
         Requirements = job.Requirements,
         Skills = job.Skills,
@@ -56,10 +56,10 @@ public sealed class JobExportService
         public string Company { get; init; } = string.Empty;
         public string Location { get; init; } = string.Empty;
         public string WorkMode { get; init; } = string.Empty;
-        public int? MatchScore { get; init; }
+        public string JobType { get; init; } = string.Empty;
         public string Salary { get; init; } = string.Empty;
         public string PostedAt { get; init; } = string.Empty;
-        public string Url { get; init; } = string.Empty;
+        public string ApplyUrl { get; init; } = string.Empty;
         public string Description { get; init; } = string.Empty;
         public string Requirements { get; init; } = string.Empty;
         public string Skills { get; init; } = string.Empty;

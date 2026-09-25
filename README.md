@@ -32,8 +32,8 @@ dotnet run --project src/JobrightScraper/JobrightScraper.csproj
 
 1. Open the **Browser** tab and sign in to Jobright. Complete any CAPTCHA there.
 2. Click **I'm logged in** when the recommend feed is visible.
-3. Switch to **Jobs**, set keywords, location, work mode, min match score, and max jobs.
-4. Click **Scrape**. The app copies your WebView2 cookies into Playwright and reads the feed.
-5. Export with **Export CSV** or **Export Excel**.
+3. Switch to **Jobs**, optionally set keywords and location, then click **Scrape**.
+4. The app keeps only **remote** jobs posted in the **last 24 hours**, skips LinkedIn apply links, and skips jobs already stored in SQLite (`D:\jobs.db`).
+5. Results are ordered by posted time (newest first). Export with **Export CSV** or **Export Excel**.
 
-The scraper uses your own logged-in session. It does not bypass login. Jobright can change its page layout; selectors live in `src/JobrightScraper/Services/JobrightSelectors.cs`.
+The scraper uses your own logged-in session. It does not bypass login.

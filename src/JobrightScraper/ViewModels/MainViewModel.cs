@@ -8,10 +8,11 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel()
     {
         var cookieBridge = new WebViewCookieBridge();
+        var store = new SqliteJobStore();
         Browser = new BrowserViewModel(cookieBridge);
         Jobs = new JobsViewModel(
             cookieBridge,
-            new PlaywrightJobScraper(),
+            new JobScraperService(store),
             new JobExportService(),
             new FileDialogService(),
             () => SelectedTabIndex = 0);

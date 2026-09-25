@@ -5,7 +5,7 @@ namespace JobrightScraper.Services;
 public interface IJobScraper
 {
     Task<IReadOnlyList<JobListing>> ScrapeAsync(
-        IReadOnlyList<BrowserCookie> cookies,
+        IBrowserSession browser,
         SearchFilters filters,
         IProgress<ScrapeProgress>? progress,
         IProgress<JobListing>? jobFound,

@@ -13,21 +13,18 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Text="Keywords" Foreground="{StaticResource MutedText}"/>
                 <TextBlock Grid.Column="1" Text="Location" Foreground="{StaticResource MutedText}"/>
-                <TextBlock Grid.Column="2" Text="Work mode" Foreground="{StaticResource MutedText}"/>
-                <TextBlock Grid.Column="3" Text="Min score" Foreground="{StaticResource MutedText}"/>
-                <TextBlock Grid.Column="4" Text="Max jobs" Foreground="{StaticResource MutedText}"/>
+                <TextBlock Grid.Column="2" Text="Max jobs" Foreground="{StaticResource MutedText}"/>
 
                 <TextBox Grid.Row="1" Grid.Column="0"
                          Text="{Binding Keywords, UpdateSourceTrigger=PropertyChanged}"
@@ -35,18 +32,11 @@
                 <TextBox Grid.Row="1" Grid.Column="1"
                          Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,4,8,0"/>
-                <ComboBox Grid.Row="1" Grid.Column="2"
-                          ItemsSource="{Binding WorkModes}"
-                          SelectedItem="{Binding WorkMode}"
-                          Margin="0,4,8,0"/>
-                <TextBox Grid.Row="1" Grid.Column="3"
-                         Text="{Binding MinMatchScore, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,4,8,0"/>
-                <TextBox Grid.Row="1" Grid.Column="4"
+                <TextBox Grid.Row="1" Grid.Column="2"
                          Text="{Binding MaxJobs, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,4,8,0"/>
 
-                <StackPanel Grid.Row="1" Grid.Column="5"
+                <StackPanel Grid.Row="1" Grid.Column="3"
                             Orientation="Horizontal"
                             Margin="8,4,0,0">
                     <Button Content="Scrape"
@@ -59,6 +49,11 @@
                             Command="{Binding ExportExcelCommand}"
                             Margin="0"/>
                 </StackPanel>
+
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="4"
+                           Margin="0,8,0,0"
+                           Foreground="{StaticResource MutedText}"
+                           Text="Remote only · posted in the last 24 hours · skip LinkedIn apply links · skip jobs already in SQLite"/>
             </Grid>
         </Border>
 
@@ -74,11 +69,11 @@
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="2*"/>
                 <DataGridTextColumn Header="Company" Binding="{Binding Company}" Width="*"/>
                 <DataGridTextColumn Header="Location" Binding="{Binding Location}" Width="*"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding JobType}" Width="110"/>
                 <DataGridTextColumn Header="Mode" Binding="{Binding WorkMode}" Width="90"/>
-                <DataGridTextColumn Header="Score" Binding="{Binding MatchScore}" Width="70"/>
                 <DataGridTextColumn Header="Salary" Binding="{Binding Salary}" Width="120"/>
                 <DataGridTextColumn Header="Posted" Binding="{Binding PostedAt}" Width="110"/>
-                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="1.4*"/>
+                <DataGridTextColumn Header="Apply URL" Binding="{Binding Url}" Width="1.8*"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding DescriptionPreview}" Width="2*"/>
             </DataGrid.Columns>
         </DataGrid>

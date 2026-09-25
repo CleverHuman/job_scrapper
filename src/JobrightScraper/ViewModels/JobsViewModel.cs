@@ -8,7 +8,7 @@ namespace JobrightScraper.ViewModels;
 
 public partial class JobsViewModel : ObservableObject
 {
-    private readonly ICookieBridge _cookieBridge;
+    private readonly IBrowserSession _browser;
     private readonly IJobScraper _scraper;
     private readonly JobExportService _exportService;
     private readonly FileDialogService _fileDialog;
@@ -22,12 +22,6 @@ public partial class JobsViewModel : ObservableObject
     private string _location = string.Empty;
 
     [ObservableProperty]
-    private WorkMode _workMode = WorkMode.All;
-
-    [ObservableProperty]
-    private int _minMatchScore;
-
-    [ObservableProperty]
     private int _maxJobs = 50;
 
     [ObservableProperty]
@@ -39,13 +33,13 @@ public partial class JobsViewModel : ObservableObject
     private bool _isScraping;
 
     public JobsViewModel(
-        ICookieBridge cookieBridge,
+        IBrowserSession browser,
         IJobScraper scraper,
         JobExportService exportService,
         FileDialogService fileDialog,
         Action showBrowserTab)
     {
-        _cookieBridge = cookieBridge;
+        _browser = browser;
         _scraper = scraper;
         _exportService = exportService;
         _fileDialog = fileDialog;
@@ -59,12 +53,10 @@ public partial class JobsViewModel : ObservableObject
 
     public ObservableCollection<JobListing> Jobs { get; } = [];
 
-    public IReadOnlyList<WorkMode> WorkModes { get; } = Enum.GetValues<WorkMode>();
-
     [RelayCommand(CanExecute = nameof(CanScrape))]
     private async Task ScrapeAsync()
     {
-        if (!_cookieBridge.IsReady)
+        if (!_browser.IsReady)
         {
             Status = "Open the Browser tab and wait for WebView2 to finish starting.";
             _showBrowserTab();
@@ -74,7 +66,7 @@ public partial class JobsViewModel : ObservableObject
         IReadOnlyList<BrowserCookie> cookies;
         try
         {
-            cookies = await _cookieBridge.GetJobrightCookiesAsync();
+            cookies = await _browser.GetJobrightCookiesAsync();
         }
         catch (Exception ex)
         {
@@ -82,7 +74,8 @@ public partial class JobsViewModel : ObservableObject
             return;
         }
 
-        if (!SessionCookieHelper.LooksLoggedIn(cookies))
+        var onRecommendFeed = _browser.CurrentUrl?.Contains("/jobs/", StringComparison.OrdinalIgnoreCase) == true;
+        if (!SessionCookieHelper.LooksLoggedIn(cookies) && !onRecommendFeed)
         {
             Status = "Log in on the Browser tab first, then click I'm logged in.";
             _showBrowserTab();
@@ -93,33 +86,27 @@ public partial class JobsViewModel : ObservableObject
         _scrapeCts = new CancellationTokenSource();
         IsScraping = true;
         Jobs.Clear();
-        Status = "Scraping…";
+        Status = "Scraping remote jobs from the last 24 hours…";
 
         var filters = new SearchFilters
         {
             Keywords = Keywords.Trim(),
             Location = Location.Trim(),
-            WorkMode = WorkMode,
-            MinMatchScore = Math.Clamp(MinMatchScore, 0, 100),
-            MaxJobs = Math.Clamp(MaxJobs, 1, 200)
+            WorkMode = WorkMode.Remote,
+            MaxJobs = Math.Clamp(MaxJobs, 1, 200),
+            MaxAgeHours = 24
         };
 
         var progress = new Progress<ScrapeProgress>(update =>
         {
             Status = $"{update.Message} ({update.Current}/{update.Total})";
         });
-        var jobFound = new Progress<JobListing>(job =>
-        {
-            if (!Jobs.Any(existing => string.Equals(existing.Url, job.Url, StringComparison.OrdinalIgnoreCase)))
-            {
-                Jobs.Add(job);
-            }
-        });
+        var jobFound = new Progress<JobListing>(InsertSorted);
 
         try
         {
-            await _scraper.ScrapeAsync(cookies, filters, progress, jobFound, _scrapeCts.Token);
-            Status = $"Finished. {Jobs.Count} job(s) scraped.";
+            await _scraper.ScrapeAsync(_browser, filters, progress, jobFound, _scrapeCts.Token);
+            Status = $"Finished. {Jobs.Count} new remote job(s) from the last 24 hours saved.";
         }
         catch (OperationCanceledException)
         {
@@ -186,6 +173,26 @@ public partial class JobsViewModel : ObservableObject
         {
             Status = ex.Message;
         }
+    }
+
+    private void InsertSorted(JobListing job)
+    {
+        if (Jobs.Any(existing =>
+                string.Equals(existing.Url, job.Url, StringComparison.OrdinalIgnoreCase)
+                || (!string.IsNullOrWhiteSpace(job.JobId)
+                    && string.Equals(existing.JobId, job.JobId, StringComparison.OrdinalIgnoreCase))))
+        {
+            return;
+        }
+
+        var posted = job.PostedAtUtc ?? DateTime.MinValue;
+        var index = 0;
+        while (index < Jobs.Count && (Jobs[index].PostedAtUtc ?? DateTime.MinValue) >= posted)
+        {
+            index++;
+        }
+
+        Jobs.Insert(index, job);
     }
 
     private bool CanScrape() => !IsScraping;
